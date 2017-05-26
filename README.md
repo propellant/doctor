@@ -24,6 +24,8 @@ _propdoc_ proposes a new way of documenting Vue components, by including some (o
 
 ### full example
 
+This example showcases all of what _propdoc_ would parse, however, none are required to be used and will not be output if absent.
+
 ```javascript
 export default {
   name: 'checkbox'
