@@ -1,6 +1,6 @@
 # install
 
-`npm install --save propDoc`
+`npm install --save propdoc`
 
 # example output
 
