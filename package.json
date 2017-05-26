@@ -1,0 +1,43 @@
+{
+  "name": "propdoc",
+  "description": "a simple VueJS component documenter",
+  "version": "0.7.0",
+  "author": "Dave Honneffer <pearofducks@gmail.com>",
+  "private": false,
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/propellant/doctor.git"
+  },
+  "keywords": [
+    "vue",
+    "vuejs",
+    "propellant",
+    "propdoc",
+    "documentation"
+  ],
+  "scripts": {
+    "build": "vue build ./index.js --prod --dist lib --lib propDoc",
+    "test": "mocha-webpack --opts .mocha-webpack.opts",
+    "test:watch": "mocha-webpack --watch --opts .mocha-webpack.opts"
+  },
+  "dependencies": {
+    "marked": "^0.3.6",
+    "vue": "^2.2.1"
+  },
+  "devDependencies": {
+    "avoriaz": "^1.13.1",
+    "babel-core": "^6.0.0",
+    "babel-loader": "^7.0.0",
+    "babel-preset-latest": "^6.0.0",
+    "jsdom": "^9.9.1",
+    "mocha": "^3.2.0",
+    "mocha-webpack": "^1.0.0-beta.1",
+    "should": "^11.2.1",
+    "vue-cli": "^2.8.2",
+    "vue-loader": "^12.0.0",
+    "vue-template-compiler": "^2.2.1",
+    "webpack": "^2.2.0",
+    "webpack-node-externals": "^1.6.0"
+  }
+}
