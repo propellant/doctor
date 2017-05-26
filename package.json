@@ -1,6 +1,6 @@
 {
   "name": "propdoc",
-  "description": "a simple VueJS component documenter",
+  "description": "quick and easy documentation of Vue.js components",
   "version": "0.7.0",
   "author": "Dave Honneffer <pearofducks@gmail.com>",
   "private": false,
@@ -14,7 +14,8 @@
     "vuejs",
     "propellant",
     "propdoc",
-    "documentation"
+    "documentation",
+    "component"
   ],
   "scripts": {
     "build": "vue build ./index.js --prod --dist lib --lib propDoc",
