@@ -28,12 +28,12 @@ This example showcases all of what _propdoc_ would parse, however, none are requ
 
 ```javascript
 export default {
-  name: 'checkbox'
+  name: 'checkbox',
   introduction: 'an amazing checkbox',
   description: `
   This \`checkbox\` is amazing, you should _check_ it out.
   `,
-  token: "<checkbox label="foo"></checkbox>",
+  token: "<checkbox label='foo'></checkbox>",
   props: {
     label: {
       type: String,

@@ -1,3 +1,4 @@
+/* eslint no-unused-vars: 0 */
 import { mount } from 'avoriaz'
 import should from 'should'
 import propDoc from '../propDoc.vue'
@@ -7,11 +8,11 @@ let tBasic = {
   props: ['one', 'two', 'three']
 }
 let tAnnotations = {
- introduction: 'a brief intro to the component',
- description: `
-  a more _in-depth_ description that will be rendered with markdown, using \`marked\`
- `,
- token: `<my-component foo="bar"></my-component>`
+  introduction: 'a brief intro to the component',
+  description: `
+    a more _in-depth_ description that will be rendered with markdown, using \`marked\`
+  `,
+  token: `<my-component foo="bar"></my-component>`
 }
 let tComplex = {
   name: 'bar',
@@ -134,5 +135,25 @@ describe('propDoc prop annotation', () => {
     const component = mount(propDoc, { propsData: { component: tComplex } })
     component.find('.propcol.required')[1].text().should.be.exactly('first')
     component.find('.propcol.required')[2].text().should.be.exactly('fifth')
+  })
+})
+describe('propDoc.methods.getDoc()', () => {
+  it('will ignore non-annotated prop arrays', () => {
+    let basicDoc = propDoc.getDoc(tBasic)
+    basicDoc.name.should.be.exactly(tBasic.name)
+    basicDoc.props[0].should.be.exactly('one')
+  })
+  it('maps props to a propdoc-parsed array of objects', () => {
+    let complexDoc = propDoc.getDoc(tComplex)
+    complexDoc.name.should.be.exactly(tComplex.name)
+    complexDoc.props[0].name.should.be.exactly('first')
+    complexDoc.props[0].type.should.be.exactly('array')
+    complexDoc.props[0].required.should.be.exactly(true)
+    complexDoc.props[0].note.should.be.exactly(tComplex.props.first.note)
+  })
+  it('will merge components and documentation, just like normal', () => {
+    let completeDoc = propDoc.getDoc(tComplex, tAnnotations)
+    completeDoc.name.should.be.exactly(tComplex.name)
+    completeDoc.introduction.should.be.exactly(tAnnotations.introduction)
   })
 })

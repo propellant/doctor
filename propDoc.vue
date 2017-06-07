@@ -1,5 +1,5 @@
 <template>
-  <article class="propdoc" v-if="merged.name">
+  <article class="propdoc" v-if="merged && merged.name">
     <h2 class="title">{{ merged.name }}</h2>
     <h3 class="subtitle" v-if="merged.introduction">{{ merged.introduction }}</h3>
     <div class="use">
@@ -38,8 +38,7 @@ export default {
   },
   computed: {
     merged() {
-      if (this.component && this.documentation) return Object.assign(this.component, this.documentation)
-      return this.component
+      return this.merge(this.component, this.documentation)
     },
     description() {
       return marked(this.merged.description)
@@ -54,6 +53,22 @@ export default {
       const re = new RegExp(`^[ \\t]{${indent}}`, 'gm')
       return indent > 0 ? text.replace(re, '') : text
     }
+  },
+  getDoc(cmp, doc) {
+    let m = this.methods.merge(cmp, doc)
+    if (m.token) m.token = this.filters.sanitize(m.token)
+    if (m.description) m.description = marked(m.description)
+    if (Array.isArray(m.props)) return m
+    m.props = Object.entries(m.props).map(([k,v]) => {
+      return {
+        name: k,
+        type: this.methods.getType(v.type),
+        required: v.required || false,
+        default: this.methods.getDefault(v.default),
+        note: v.note
+      }
+    })
+    return m
   },
   methods: {
     getDefault(d) {
@@ -70,6 +85,9 @@ export default {
         if (Array.isArray(t())) return 'array'
       }
       return type
+    },
+    merge(a, b) {
+      return Object.assign({}, a, b)
     }
   }
 }
