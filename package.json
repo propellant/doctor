@@ -1,7 +1,7 @@
 {
   "name": "propdoc",
   "description": "quick and easy documentation of Vue.js components",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "author": "Dave Honneffer <pearofducks@gmail.com>",
   "private": false,
   "main": "lib/index.js",
@@ -46,7 +46,10 @@
     "webpack-node-externals": "^1.6.0"
   },
   "standard": {
-    "ignore": [ "/lib/*", "/examples/*" ],
+    "ignore": [
+      "/lib/*",
+      "/examples/*"
+    ],
     "env": {
       "mocha": true
     }
