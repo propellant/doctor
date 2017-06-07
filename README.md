@@ -74,8 +74,13 @@ import myComponent from './myComponent.vue'
 
 export default {
   components: { propDoc },
+  // bind your component to use propdoc's native output
   data() {
     return { documentMe: myComponent }
+  },
+  // or call getDoc() and use the same data in your own template
+  computed: {
+    myComponentDoc() { return propDoc.getDoc(myComponent) }
   }
 }
 </script>
