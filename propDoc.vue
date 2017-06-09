@@ -59,7 +59,8 @@ export default {
     if (m.token) m.token = this.filters.sanitize(m.token)
     if (m.description) m.description = marked(m.description)
     if (Array.isArray(m.props)) return m
-    m.props = Object.entries(m.props).map(([k,v]) => {
+    m.props = Object.keys(m.props).map((k) => {
+      let v = m.props[k]
       return {
         name: k,
         type: this.methods.getType(v.type),
