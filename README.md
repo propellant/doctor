@@ -1,6 +1,6 @@
 # propdoc [![Build Status](https://travis-ci.org/propellant/doctor.svg?branch=master)](https://travis-ci.org/propellant/doctor)
 
-> quick and easy documentation of Vue.js components Edit
+> quick and easy documentation of Vue.js components
 
 #### installation
 
@@ -16,11 +16,11 @@ This example was solely generated based on the extra fields described below.
 
 _propdoc_ proposes a new way of documenting Vue components, by including some (or all) of the documentation in the component itself.
 
-**Benefits:**
+Benefits:
 - _props_ can be directly annotated, making documentation essentially the same as commenting a prop
 - Documentation can live directly in the component - thus centralizing the documentation and hopefully helping the development/documentation cycle
 
-**Downsides:**
+Downsides:
 - If all documentation is built into the options object, the component will use additional space
   - This can be mitigated by externalizing the larger proposed keys such as `description` and `token`
 
