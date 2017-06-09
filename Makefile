@@ -1,12 +1,12 @@
-.PHONY: test release
+.PHONY: all test ci-test release help lint
 
 all:		## Run test and release below
-all: release-test release
+all: ci-test release
 
 help:		## Show this help
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
-release-test: lint
+ci-test: lint
 	@npm run mocha
 
 test:		## Run linter and all tests
