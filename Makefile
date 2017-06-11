@@ -19,3 +19,14 @@ lint:		## Run linter
 release:	## Create a release of js and css in the lib folder
 	@echo "\nCreating a release of propDoc\n"
 	@npm run release
+
+push-to-npm:
+	npm publish
+
+cleanup-lib:
+	rm -rf lib
+
+publish: all push-to-npm cleanup-lib
+
+bump:
+	npm version patch
