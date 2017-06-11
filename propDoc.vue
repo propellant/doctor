@@ -2,10 +2,12 @@
   <article class="propdoc" v-if="merged && merged.name">
     <h2 class="title">{{ merged.name }}</h2>
     <h3 class="subtitle" v-if="merged.introduction">{{ merged.introduction }}</h3>
+    <slot name="pre-use"></slot>
     <div class="use">
       <div class="description" v-html="description" v-if="merged.description"></div>
-      <div class="token" v-if="merged.token"><pre><code>{{ merged.token | sanitize }}</code></pre></div>
+      <div class="token" v-if="merged.token"><pre><code data-lang="vue">{{ merged.token | sanitize }}</code></pre></div>
     </div>
+    <slot name="pre-props"></slot>
     <section class="props" v-if="merged.props">
       <div class="proprow labels">
         <div class="propcol name required">name <span>(required)</span></div>
