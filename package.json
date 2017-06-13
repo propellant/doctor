@@ -23,7 +23,8 @@
     "mocha": "mocha-webpack --opts .mocha-webpack.opts",
     "test": "npm run mocha --silent || true",
     "test:watch": "mocha-webpack --watch --opts .mocha-webpack.opts",
-    "lint": "standard"
+    "lint": "standard",
+    "lint:fix": "standard --fix"
   },
   "peerDependencies": {
     "vue": "^2.2.1"

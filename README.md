@@ -101,6 +101,12 @@ export default {
   - if the component's name or other fields should be output differently for documentation
   - for the optional documentation fields, as these will cause some additional space to be used by your components if not separated
 
+#### slots
+
+Two named slots are available for adding content to what _propdoc_ emits
+- `pre-use` will add content before the _description_ and _token_ fields
+- `pre-props` will add content before the prop tables are emitted
+
 #### propDoc.getDoc
 
 > available in v0.8 onward

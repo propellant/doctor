@@ -1,7 +1,10 @@
 /* eslint no-unused-vars: 0 */
 import { mount } from 'avoriaz'
 import should from 'should'
+import marked from 'marked'
 import propDoc from '../propDoc.vue'
+import testCheckboxMixin from './fixtures/checkboxMixin.vue'
+import testCheckboxSolo from './fixtures/checkboxSolo.vue'
 
 let tBasic = {
   name: 'foo',
@@ -125,7 +128,17 @@ describe('propDoc option merging', () => {
     component.vm.merged.token.should.be.ok()
   })
 })
-describe('propDoc prop annotation', () => {
+describe('propDoc.methods.processProps(component)', () => {
+  it('will annotate basic prop arrays by filling in appropriate types, defaults, etc', () => {
+    let basicDoc = propDoc.getDoc(tBasic)
+    basicDoc.name.should.be.exactly(tBasic.name)
+    basicDoc.props.one.should.eql({
+      type: 'any',
+      required: false,
+      default: 'undefined',
+      note: ''
+    })
+  })
   it('adds notes found in the "note" key for each prop', () => {
     const component = mount(propDoc, { propsData: { component: tComplex } })
     component.find('.propcol.notes')[1].text().should.be.exactly(tComplex.props.first.note)
@@ -136,24 +149,42 @@ describe('propDoc prop annotation', () => {
     component.find('.propcol.required')[1].text().should.be.exactly('first')
     component.find('.propcol.required')[2].text().should.be.exactly('fifth')
   })
-})
-describe('propDoc.methods.getDoc()', () => {
-  it('will ignore non-annotated prop arrays', () => {
-    let basicDoc = propDoc.getDoc(tBasic)
-    basicDoc.name.should.be.exactly(tBasic.name)
-    basicDoc.props[0].should.be.exactly('one')
-  })
-  it('maps props to a propdoc-parsed array of objects', () => {
+  it('re-maps prop values to their processed equivalent', () => {
     let complexDoc = propDoc.getDoc(tComplex)
     complexDoc.name.should.be.exactly(tComplex.name)
-    complexDoc.props[0].name.should.be.exactly('first')
-    complexDoc.props[0].type.should.be.exactly('array')
-    complexDoc.props[0].required.should.be.exactly(true)
-    complexDoc.props[0].note.should.be.exactly(tComplex.props.first.note)
+    complexDoc.props.first.should.be.ok()
+    complexDoc.props.first.type.should.be.exactly('array')
+    complexDoc.props.first.required.should.be.exactly(true)
+    complexDoc.props.first.note.should.be.exactly(tComplex.props.first.note)
   })
+})
+describe('propDoc.getDoc()', () => {
   it('will merge components and documentation, just like normal', () => {
     let completeDoc = propDoc.getDoc(tComplex, tAnnotations)
     completeDoc.name.should.be.exactly(tComplex.name)
     completeDoc.introduction.should.be.exactly(tAnnotations.introduction)
+    completeDoc.description.should.be.exactly(marked(tAnnotations.description))
+  })
+})
+describe('propDoc mixin handling', () => {
+  it('will automatically bring in props from mixins', () => {
+    propDoc.methods.hasMixins(testCheckboxSolo).should.be.false()
+    propDoc.methods.hasMixins(testCheckboxMixin).should.be.true()
+  })
+  it('will pull props from mixins and return them as a normal prop object', () => {
+    let mix = testCheckboxMixin.mixins
+    propDoc.methods.getPropsFromMixins(mix).should.eql(mix[0].props)
+  })
+  it('will process props and mixin-props as though they were one object', () => {
+    let allInOne = propDoc.getDoc(testCheckboxSolo)
+    let propsInMixins = propDoc.getDoc(testCheckboxMixin)
+    allInOne.props.should.eql(propsInMixins.props)
+  })
+  it('will ignore mixin-props when "ignore-mixins" is specified', () => {
+    let allInOne = propDoc.getDoc(testCheckboxSolo)
+    let propsInMixinsIgnored = propDoc.getDoc(testCheckboxMixin, null, true)
+    allInOne.props.should.not.eql(propsInMixinsIgnored.props)
+    const component = mount(propDoc, { propsData: { component: testCheckboxMixin, ignoreMixins: true } })
+    component.vm.merged.should.eql(propsInMixinsIgnored)
   })
 })

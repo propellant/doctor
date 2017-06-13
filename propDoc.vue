@@ -4,8 +4,8 @@
     <h3 class="subtitle" v-if="merged.introduction">{{ merged.introduction }}</h3>
     <slot name="pre-use"></slot>
     <div class="use">
-      <div class="description" v-html="description" v-if="merged.description"></div>
-      <div class="token" v-if="merged.token"><pre><code data-lang="vue">{{ merged.token | sanitize }}</code></pre></div>
+      <div class="description" v-html="merged.description" v-if="merged.description"></div>
+      <div class="token" v-if="merged.token"><pre><code data-lang="vue">{{ merged.token }}</code></pre></div>
     </div>
     <slot name="pre-props"></slot>
     <section class="props" v-if="merged.props">
@@ -17,8 +17,8 @@
       </div>
       <div class="proprow" v-for="(propinfo, propname) in merged.props">
         <div class="propcol name" :class="{ required: propinfo.required }"><span>{{ propname }}</span></div>
-        <div class="propcol type">{{ getType(propinfo.type) }}</div>
-        <div class="propcol default">{{ getDefault(propinfo.default) }}</div>
+        <div class="propcol type">{{ propinfo.type }}</div>
+        <div class="propcol default">{{ propinfo.default }}</div>
         <div class="propcol notes">{{ propinfo.note }}</div>
       </div>
     </section>
@@ -36,44 +36,59 @@ export default {
     },
     documentation: {
       type: Object
-    }
-  },
-  computed: {
-    merged() {
-      return this.merge(this.component, this.documentation)
     },
-    description() {
-      return marked(this.merged.description)
+    ignoreMixins: {
+      type: Boolean,
+      default: false
     }
   },
-  filters: {
+  data() {
+    return { merged: this.process(this.component, this.documentation) }
+  },
+  getDoc(component, documentation, ignoreMixins) {
+    return this.methods.process(component,documentation,ignoreMixins)
+  },
+  methods: {
+    process(component, documentation,ignoreMixins) {
+      let m = this.merge(component, documentation)
+      if (m.token) m.token = this.sanitize(m.token)
+      if (m.description) m.description = marked(m.description)
+      if (! (ignoreMixins || this.ignoreMixins)) {
+        if (m.mixins) m.props = this.merge(this.getPropsFromMixins(m.mixins), m.props)
+      }
+      if (m.props) m.props = this.processProps(m.props)
+      return m
+    },
     sanitize(text) {
       text = text.trim()
       const match = text.match(/^[ \t]*(?=\S)/gm)
       if (!match) return text
-      const indent = Math.min.apply(Math, match.map(x => x.length))
+        const indent = Math.min.apply(Math, match.map(x => x.length))
       const re = new RegExp(`^[ \\t]{${indent}}`, 'gm')
       return indent > 0 ? text.replace(re, '') : text
-    }
-  },
-  getDoc(cmp, doc) {
-    let m = this.methods.merge(cmp, doc)
-    if (m.token) m.token = this.filters.sanitize(m.token)
-    if (m.description) m.description = marked(m.description)
-    if (Array.isArray(m.props)) return m
-    m.props = Object.keys(m.props).map((k) => {
-      let v = m.props[k]
-      return {
-        name: k,
-        type: this.methods.getType(v.type),
-        required: v.required || false,
-        default: this.methods.getDefault(v.default),
-        note: v.note
-      }
-    })
-    return m
-  },
-  methods: {
+    },
+    getPropsFromMixins(mixins) {
+      return mixins.reduce((map, mixin) => {
+        Object.assign(map, mixin.props)
+        return map
+      }, {})
+    },
+    processProps(props) {
+      let keys = Array.isArray(props) ? props : Object.keys(props)
+      return keys.reduce((map, k) => {
+        let v = new Proxy(props[k] || {}, this.basicArrayProxy)
+        map[k] = {
+          type: this.getType(v.type),
+          required: v.required || false,
+          default: this.getDefault(v.default),
+          note: v.note || ""
+        }
+        return map
+      }, {})
+    },
+    basicArrayProxy(target, name) {
+      return name in target ? target[name] : undefined
+    },
     getDefault(d) {
       if (typeof(d) !== 'undefined') {
         if (typeof(d) === 'function') return JSON.stringify(d())
@@ -91,6 +106,9 @@ export default {
     },
     merge(a, b) {
       return Object.assign({}, a, b)
+    },
+    hasMixins(component) {
+      return typeof(component.mixins) !== 'undefined'
     }
   }
 }
