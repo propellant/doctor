@@ -87,7 +87,7 @@ export default {
   <section>
     <prop-doc :component="documentMe"></prop-doc>
     <div>
-      <h1>{{ myComponentDoc.name }}<h1>
+      <h1>{{ myComponentDoc.name }}</h1>
       <p>{{ myComponentDoc.introduction }}</p>
     </div>
   </section>
