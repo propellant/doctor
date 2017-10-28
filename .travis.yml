@@ -2,5 +2,7 @@ language: node_js
 node_js:
   - "node"
   - "6"
-cache: yarn
+cache:
+  directories:
+  - node_modules
 script: make ci-test
