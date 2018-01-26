@@ -96,15 +96,16 @@ export default {
       }
       return 'undefined'
     },
+    isTypeArray(t) {
+        return ( typeof(t()) === 'object' && Array.isArray(t()) )
+    },
     getType(t) {
       if (typeof(t) === 'undefined') return 'any'
       if (Array.isArray(t)) {
-          return t.map(type => typeof(type())).join('|')
+          return t.map(type => (this.isTypeArray(type) ? 'array' : typeof(type()))).join('|')
       }
       let type = typeof(t())
-      if (type === 'object') {
-        if (Array.isArray(t())) return 'array'
-      }
+      if (this.isTypeArray(t)) return 'array'
       return type
     },
     merge(a, b) {
