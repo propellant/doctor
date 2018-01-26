@@ -98,6 +98,9 @@ export default {
     },
     getType(t) {
       if (typeof(t) === 'undefined') return 'any'
+      if (Array.isArray(t)) {
+          return t.map(type => typeof(type())).join('|')
+      }
       let type = typeof(t())
       if (type === 'object') {
         if (Array.isArray(t())) return 'array'

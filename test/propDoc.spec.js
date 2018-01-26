@@ -54,7 +54,8 @@ let tTypes = {
     d: { type: Function },
     e: { type: Object },
     f: { type: Array },
-    g: { type: Symbol }
+    g: { type: Symbol },
+    h: { type: [Boolean, String] }
   }
 }
 describe('propDoc.vue DOM', () => {
@@ -104,6 +105,7 @@ describe('propDoc.getType', () => {
     component.vm.getType(tTypes.props.e.type).should.be.exactly('object')
     component.vm.getType(tTypes.props.f.type).should.be.exactly('array')
     component.vm.getType(tTypes.props.g.type).should.be.exactly('symbol')
+    component.vm.getType(tTypes.props.h.type).should.be.exactly('boolean|string')
   })
 })
 describe('propDoc option merging', () => {
