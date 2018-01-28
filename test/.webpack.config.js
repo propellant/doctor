@@ -15,11 +15,11 @@ module.exports = {
       }
     ]
   },
-  target: 'node',
   externals: [nodeExternals()],
   resolve: {
     alias: {
       'vue$': 'vue/dist/vue.esm.js'
     }
   },
+  devtool: '#eval-source-map'
 }
