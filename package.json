@@ -19,7 +19,7 @@
     "component"
   ],
   "scripts": {
-    "release": "poi build ./index.js",
+    "release": "npx poi build ./propDoc.vue --library 'propDoc'",
     "mocha": "mocha-webpack --opts .mocha-webpack.opts",
     "test": "npm run mocha --silent || true",
     "test:watch": "mocha-webpack --watch --opts .mocha-webpack.opts",
