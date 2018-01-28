@@ -1,7 +1,7 @@
 {
   "name": "propdoc",
   "description": "quick and easy documentation of Vue.js components",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "author": "Dave Honneffer <pearofducks@gmail.com>",
   "private": false,
   "main": "lib/index.js",
@@ -50,7 +50,12 @@
   },
   "babel": {
     "presets": [
-      ["env", { "modules": false }]
+      [
+        "env",
+        {
+          "modules": false
+        }
+      ]
     ]
   },
   "standard": {
