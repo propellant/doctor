@@ -18,7 +18,14 @@
       <div class="proprow" v-for="(propinfo, propname) in merged.props">
         <div class="propcol name" :class="{ required: propinfo.required }"><span>{{ propname }}</span></div>
         <div class="propcol type">{{ propinfo.type }}</div>
-        <div class="propcol default">{{ propinfo.default }}</div>
+        <div class="propcol default">
+          <!--optionally you can output this: {{ propinfo.defaultType }} -->
+          <code
+            v-if="['array', 'object', 'function'].includes(propinfo.defaultType)"
+            style="white-space: pre-wrap;"
+          >{{ propinfo.default }}</code>
+          <span v-else>{{ propinfo.default }}</span>
+        </div>
         <div class="propcol notes">{{ propinfo.note }}</div>
       </div>
     </section>
@@ -77,36 +84,57 @@ export default {
       let keys = Array.isArray(props) ? props : Object.keys(props)
       return keys.reduce((map, k) => {
         let v = new Proxy(props[k] || {}, this.basicArrayProxy)
-        map[k] = {
+
+        let objInfo = {}
+
+        objInfo = Object.assign(objInfo, {
           type: this.getType(v.type),
           required: v.required || false,
-          default: this.getDefault(v.default),
+          default: this.getDefault(v.default, v.type, objInfo),
+          // defaultType - this will be sets from the function which is on line above (getDefault)
           note: v.note || ""
-        }
+        })
+
+        map[k] = objInfo
+
         return map
       }, {})
     },
     basicArrayProxy(target, name) {
       return name in target ? target[name] : undefined
     },
-    getDefault(d) {
-      if (typeof(d) !== 'undefined') {
-        if (typeof(d) === 'function') return JSON.stringify(d())
-        return JSON.stringify(d)
+    getDefault(d, forType, objInfo ) {
+      if (typeof(d) === 'undefined') return 'undefined'
+
+      if (getTypeString(d) === 'function') {
+        // if type array or object then call default function to get default value
+        if (getTypeString(forType) === 'function' && ['array', 'object'].includes(getTypeString(forType()))) {
+          objInfo.defaultType = getTypeString(d())
+          return JSON.stringify(d(), null, 2)
+        }
+
+        objInfo.defaultType = 'function'
+        // if not array or object then hust get function in text format
+        return d.toString()
       }
-      return 'undefined'
+
+      objInfo.defaultType = getTypeString(d)
+      // for all other types
+      return JSON.stringify(d)
     },
-    isTypeArray(t) {
-        return ( typeof(t()) === 'object' && Array.isArray(t()) )
-    },
+    // works for all types
     getType(t) {
-      if (typeof(t) === 'undefined') return 'any'
-      if (Array.isArray(t)) {
-          return t.map(type => (this.isTypeArray(type) ? 'array' : typeof(type()))).join('|')
+      // for null and undefined
+      if (t == undefined) return 'any'
+
+      if (getTypeString(t) === 'function') {
+        return getTypeString(t())
       }
-      let type = typeof(t())
-      if (this.isTypeArray(t)) return 'array'
-      return type
+      if (Array.isArray(t)) {
+        return t.map(this.getType)
+      }
+
+      return getTypeString(t)
     },
     merge(a, b) {
       return Object.assign({}, a, b)
@@ -115,5 +143,9 @@ export default {
       return typeof(component.mixins) !== 'undefined'
     }
   }
+}
+
+function getTypeString (variable) {
+  return Object.prototype.toString.call(variable).slice(8, -1).toLowerCase()
 }
 </script>
