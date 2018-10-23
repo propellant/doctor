@@ -48,7 +48,8 @@ code {
   font-family: $code-font-family;
   background-color: transparentize(#F3C387, 0.5);
   color: #14435A;
-  padding: 0.2rem;
+  // padding: 0.2rem;
+  padding: 0.1rem;
 }
 pre code {
   line-height: 1.8;
